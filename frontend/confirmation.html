@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Booking Confirmed — CineVerse Film Festival 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07080a;
+      --surface: #0f1014;
+      --surface2: #16181d;
+      --gold: #c9a84c;
+      --gold-light: #e2c97e;
+      --gold-dim: #7a6330;
+      --white: #ede8e0;
+      --muted: #5a5650;
+      --accent: #b03a2e;
+      --green: #27ae60;
+      --border: rgba(201,168,76,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9998;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 56px;
+      background: rgba(7,8,10,0.95);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem;
+      letter-spacing: 0.18em; color: var(--gold); text-decoration: none;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo span { color: var(--white); }
+    .nav-logo-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    .nav-right { display: flex; gap: 16px; }
+    .nav-link {
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--white); }
+
+    /* MAIN LAYOUT */
+    .main { max-width: 1100px; margin: 0 auto; padding: 64px 56px 96px; }
+
+    /* SUCCESS HEADER */
+    .success-header {
+      text-align: center; margin-bottom: 64px;
+      animation: fadeUp 0.7s ease forwards;
+    }
+    .success-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(39,174,96,0.1);
+      border: 2px solid var(--green);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin: 0 auto 24px;
+      animation: scaleIn 0.5s 0.2s ease both;
+    }
+    .success-eyebrow { font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+    .success-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: 0.04em; margin-bottom: 10px; }
+    .success-sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.1rem; color: var(--muted); }
+    .booking-ref-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      border: 1px solid var(--border); padding: 10px 24px;
+      margin-top: 20px; font-size: 0.75rem; color: var(--muted);
+    }
+    .booking-ref-badge strong { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.1em; color: var(--gold); }
+
+    /* CONTENT GRID */
+    .content-grid {
+      display: grid; grid-template-columns: 1fr 380px;
+      gap: 32px; align-items: start;
+    }
+
+    /* TICKET CARD */
+    .ticket-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      position: relative; overflow: hidden;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+    .ticket-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px; background: var(--gold);
+    }
+    .ticket-header {
+      padding: 28px 32px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 20px;
+    }
+    .ticket-poster {
+      width: 80px; height: 110px; object-fit: cover;
+      border: 1px solid var(--border); flex-shrink: 0;
+    }
+    .ticket-poster-placeholder {
+      width: 80px; height: 110px; flex-shrink: 0;
+      background: var(--surface2); display: flex;
+      align-items: center; justify-content: center; font-size: 1.8rem;
+      border: 1px solid var(--border);
+    }
+    .ticket-film-info { flex: 1; }
+    .ticket-genre { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+    .ticket-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.04em; line-height: 1; margin-bottom: 4px; }
+    .ticket-director { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--muted); }
+
+    .ticket-details {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 1px; background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .ticket-detail-item {
+      background: var(--surface); padding: 20px 24px;
+    }
+    .detail-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .detail-value { font-size: 0.92rem; color: var(--white); font-weight: 500; }
+    .detail-value.gold { color: var(--gold); font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.05em; }
+
+    .ticket-footer {
+      padding: 20px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .ticket-status {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+    .ticket-amount { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--gold); letter-spacing: 0.05em; }
+
+    /* QR CODE SECTION */
+    .qr-section {
+      border-top: 1px dashed rgba(201,168,76,0.2);
+      padding: 24px 32px;
+      display: flex; align-items: center; gap: 24px;
+    }
+    #qrcode canvas, #qrcode img { border: 6px solid var(--white); display: block; }
+    .qr-info { }
+    .qr-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    .qr-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; max-width: 260px; }
+
+    /* SIDEBAR */
+    .sidebar { display: flex; flex-direction: column; gap: 20px; animation: fadeUp 0.7s 0.35s ease both; }
+
+    /* ACTIONS CARD */
+    .actions-card {
+      background: var(--surface); border: 1px solid var(--border); padding: 28px;
+    }
+    .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.06em; margin-bottom: 18px; color: var(--gold); }
+    .action-btn {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; background: transparent;
+      border: 1px solid rgba(237,232,224,0.1);
+      color: var(--white); padding: 13px 16px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+      cursor: pointer; transition: all 0.2s; margin-bottom: 10px;
+      text-align: left; text-decoration: none;
+    }
+    .action-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .action-btn:last-child { margin-bottom: 0; }
+    .action-btn-icon { font-size: 1.1rem; }
+    .action-btn.primary {
+      background: var(--gold); color: var(--bg); border-color: var(--gold);
+      font-weight: 500;
+    }
+    .action-btn.primary:hover { background: var(--gold-light); color: var(--bg); }
+
+    /* SHARE CARD */
+    .share-card { background: var(--surface); border: 1px solid var(--border); padding: 28px; }
+    .share-btns { display: flex; flex-direction: column; gap: 10px; }
+    .share-btn {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 16px; border: 1px solid rgba(237,232,224,0.1);
+      background: transparent; color: var(--white);
+      font-family: 'DM Sans', sans-serif; font-size: 0.78rem;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+    }
+    .share-btn:hover { border-color: var(--gold); }
+    .share-btn-icon { font-size: 1.1rem; }
+
+    /* BANNER SECTION */
+    .banner-section {
+      margin-top: 48px;
+      animation: fadeUp 0.7s 0.5s ease both;
+    }
+    .banner-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 28px; padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .banner-eyebrow { font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .banner-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 0.04em; }
+    .banner-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; max-width: 400px; }
+
+    .banner-preview-wrap {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 24px; margin-bottom: 20px;
+    }
+    .banner-canvas-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+    #bannerCanvas {
+      display: block; max-width: 100%; height: auto;
+      border: 1px solid var(--border);
+    }
+
+    .banner-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn-download {
+      background: var(--gold); color: var(--bg); border: none;
+      padding: 13px 28px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-download:hover { background: var(--gold-light); }
+    .btn-share-wa {
+      background: #25d366; color: #fff; border: none;
+      padding: 13px 28px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; cursor: pointer; transition: opacity 0.2s;
+      display: flex; align-items: center; gap: 8px; text-decoration: none;
+    }
+    .btn-share-wa:hover { opacity: 0.85; }
+    .btn-share-tw {
+      background: #1da1f2; color: #fff; border: none;
+      padding: 13px 28px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; cursor: pointer; transition: opacity 0.2s;
+      display: flex; align-items: center; gap: 8px; text-decoration: none;
+    }
+    .btn-share-tw:hover { opacity: 0.85; }
+
+    /* LOADING STATE */
+    .loading-state {
+      text-align: center; padding: 120px 20px;
+    }
+    .loading-spinner {
+      width: 48px; height: 48px;
+      border: 2px solid var(--border); border-top-color: var(--gold);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
+    .loading-text { color: var(--muted); font-size: 0.85rem; letter-spacing: 0.1em; }
+
+    /* ERROR STATE */
+    .error-state {
+      text-align: center; padding: 120px 20px;
+    }
+    .error-icon { font-size: 2.5rem; margin-bottom: 16px; opacity: 0.4; }
+    .error-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .error-msg { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; line-height: 1.6; }
+
+    /* FOOTER */
+    footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 32px 56px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--gold); letter-spacing: 0.15em; }
+    .footer-logo span { color: var(--muted); }
+    .footer-note { font-size: 0.7rem; color: var(--muted); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes scaleIn { from { opacity:0; transform:scale(0.5); } to { opacity:1; transform:scale(1); } }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      nav { padding: 18px 24px; }
+      .main { padding: 48px 24px 72px; }
+      .content-grid { grid-template-columns: 1fr; }
+      .sidebar { order: -1; }
+      .ticket-details { grid-template-columns: 1fr 1fr; }
+      footer { padding: 24px; flex-direction: column; gap: 8px; text-align: center; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .main { padding: 36px 20px 60px; }
+      .ticket-header { flex-direction: column; align-items: flex-start; }
+      .ticket-details { grid-template-columns: 1fr; }
+      .qr-section { flex-direction: column; align-items: flex-start; }
+      .banner-actions { flex-direction: column; }
+      .btn-download, .btn-share-wa, .btn-share-tw { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <span class="nav-logo-dot"></span>Cine<span>Verse</span>
+  </a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-link">Browse Films</a>
+    <a href="my-bookings.html" class="nav-link">My Bookings</a>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main" id="mainContent">
+  <div class="loading-state">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading your booking...</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Cine<span>Verse</span></div>
+  <div class="footer-note">© 2026 CineVerse Film Festival · Kochi, Kerala</div>
+</footer>
+
+<script>
+  const API = 'http://127.0.0.1:8000/api';
+  const params = new URLSearchParams(window.location.search);
+  const bookingId = params.get('booking_id');
+  const bookingRef = params.get('ref');
+  const accessToken = localStorage.getItem('access_token');
+
+  let bookingData = null;
+
+  // ── Init ──
+  async function init() {
+    if (!accessToken) {
+      window.location.href = `login.html?next=${encodeURIComponent(window.location.href)}`;
+      return;
+    }
+    if (!bookingId) {
+      showError('No booking ID found. <a href="index.html" style="color:var(--gold)">Go back to films</a>');
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/bookings/${bookingId}/`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      if (res.status === 401) {
+        window.location.href = `login.html?next=${encodeURIComponent(window.location.href)}`;
+        return;
+      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      bookingData = await res.json();
+      renderPage(bookingData);
+    } catch (err) {
+      console.error(err);
+      // If API fails, try to render with URL params
+      if (bookingRef) renderPageFromParams();
+      else showError('Could not load booking details. Please check your bookings page.');
+    }
+  }
+
+  // ── Render full page ──
+  function renderPage(b) {
+    const showtime = b.showtime || {};
+    const venue = showtime.venue || {};
+    const dt = new Date(b.show_date || showtime.start_time);
+    const dateStr = dt.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const timeStr = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+    document.title = `${b.film_title} — Booking Confirmed`;
+
+    document.getElementById('mainContent').innerHTML = `
+      <!-- SUCCESS HEADER -->
+      <div class="success-header">
+        <div class="success-icon">✓</div>
+        <p class="success-eyebrow">Payment Successful</p>
+        <h1 class="success-title">You're All Set!</h1>
+        <p class="success-sub">Your tickets have been confirmed. See you at the festival.</p>
+        <div class="booking-ref-badge">
+          Booking Reference: <strong>${b.booking_ref}</strong>
+        </div>
+      </div>
+
+      <!-- CONTENT GRID -->
+      <div class="content-grid">
+
+        <!-- TICKET CARD -->
+        <div>
+          <div class="ticket-card">
+            <div class="ticket-header">
+              ${b.poster_url
+                ? `<img class="ticket-poster" src="${b.poster_url}" alt="${esc(b.film_title)}"/>`
+                : `<div class="ticket-poster-placeholder">🎬</div>`}
+              <div class="ticket-film-info">
+                <div class="ticket-genre">${esc(showtime.film?.genre || 'Film')}</div>
+                <div class="ticket-title">${esc(b.film_title)}</div>
+                <div class="ticket-director">Attendee: ${esc(b.attendee_name)}</div>
+              </div>
+            </div>
+
+            <div class="ticket-details">
+              <div class="ticket-detail-item">
+                <div class="detail-label">Date</div>
+                <div class="detail-value">${dateStr}</div>
+              </div>
+              <div class="ticket-detail-item">
+                <div class="detail-label">Time</div>
+                <div class="detail-value gold">${timeStr}</div>
+              </div>
+              <div class="ticket-detail-item">
+                <div class="detail-label">Venue</div>
+                <div class="detail-value">${esc(b.venue_name || venue.name || 'TBA')}</div>
+              </div>
+              <div class="ticket-detail-item">
+                <div class="detail-label">Tickets</div>
+                <div class="detail-value gold">${b.num_tickets}</div>
+              </div>
+              <div class="ticket-detail-item">
+                <div class="detail-label">Total Paid</div>
+                <div class="detail-value gold">₹${b.total_amount}</div>
+              </div>
+              <div class="ticket-detail-item">
+                <div class="detail-label">Status</div>
+                <div class="detail-value" style="color:var(--green)">${b.status?.toUpperCase()}</div>
+              </div>
+            </div>
+
+            <div class="ticket-footer">
+              <div class="ticket-status">
+                <div class="status-dot"></div>
+                Booking Confirmed
+              </div>
+              <div class="ticket-amount">REF: ${b.booking_ref}</div>
+            </div>
+
+            <!-- QR CODE -->
+            <div class="qr-section">
+              <div id="qrcode"></div>
+              <div class="qr-info">
+                <div class="qr-label">Entry QR Code</div>
+                <div class="qr-desc">Show this QR code at the venue entrance. Each ticket holder must present this code for entry.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+          <div class="actions-card">
+            <div class="card-title">Quick Actions</div>
+            <button class="action-btn primary" onclick="scrollToBanner()">
+              <span class="action-btn-icon">🖼</span>
+              Generate Shareable Banner
+            </button>
+            <button class="action-btn" onclick="window.print()">
+              <span class="action-btn-icon">🖨</span>
+              Print Ticket
+            </button>
+            <a href="my-bookings.html" class="action-btn">
+              <span class="action-btn-icon">📋</span>
+              View All My Bookings
+            </a>
+            <a href="index.html" class="action-btn">
+              <span class="action-btn-icon">🎬</span>
+              Book Another Film
+            </a>
+          </div>
+
+          <div class="share-card">
+            <div class="card-title">Share Your Plans</div>
+            <div class="share-btns">
+              <a href="https://wa.me/?text=I just booked tickets for ${encodeURIComponent(b.film_title)} at CineVerse Film Festival 2026! 🎬 Join me!" 
+                 target="_blank" class="share-btn">
+                <span class="share-btn-icon">💬</span> Share on WhatsApp
+              </a>
+              <a href="https://twitter.com/intent/tweet?text=Just booked my tickets for ${encodeURIComponent(b.film_title)} at %23CineVerse2026! 🎬🎟" 
+                 target="_blank" class="share-btn">
+                <span class="share-btn-icon">🐦</span> Share on Twitter/X
+              </a>
+              <a href="https://www.instagram.com/" target="_blank" class="share-btn">
+                <span class="share-btn-icon">📸</span> Share on Instagram
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BANNER SECTION -->
+      <div class="banner-section" id="bannerSection">
+        <div class="banner-header">
+          <div>
+            <p class="banner-eyebrow">Share Your Experience</p>
+            <h2 class="banner-title">Your Festival Banner</h2>
+          </div>
+          <p class="banner-desc">A personalized poster generated just for you. Download and share it on social media!</p>
+        </div>
+
+        <div class="banner-preview-wrap">
+          <div class="banner-canvas-label">Preview — 1080 × 566px (Instagram Landscape)</div>
+          <canvas id="bannerCanvas" width="1080" height="566"></canvas>
+        </div>
+
+        <div class="banner-actions">
+          <button class="btn-download" onclick="downloadBanner()">
+            ⬇ Download Banner
+          </button>
+          <a class="btn-share-wa"
+             href="https://wa.me/?text=I'm attending ${encodeURIComponent(b.film_title)} at CineVerse Film Festival 2026! 🎬"
+             target="_blank">
+            💬 WhatsApp
+          </a>
+          <a class="btn-share-tw"
+             href="https://twitter.com/intent/tweet?text=I'm attending ${encodeURIComponent(b.film_title)} at %23CineVerse2026! 🎬🎟"
+             target="_blank">
+            🐦 Twitter/X
+          </a>
+        </div>
+      </div>
+    `;
+
+    // Generate QR code
+    generateQR(b.booking_ref);
+
+    // Generate banner
+    generateBanner({
+      attendeeName: b.attendee_name,
+      filmTitle: b.film_title,
+      date: dateStr,
+      time: timeStr,
+      venue: b.venue_name || venue.name || 'CineVerse Venue',
+      numTickets: b.num_tickets,
+      bookingRef: b.booking_ref,
+      posterUrl: b.poster_url
+    });
+  }
+
+  // ── Render from URL params (fallback) ──
+  function renderPageFromParams() {
+    const mockBooking = {
+      booking_ref: bookingRef || 'XXXXXXXX',
+      film_title: 'Your Film',
+      attendee_name: 'Guest',
+      num_tickets: 1,
+      total_amount: '0.00',
+      status: 'confirmed',
+      show_date: new Date().toISOString(),
+      venue_name: 'CineVerse Venue',
+      poster_url: null,
+      showtime: {}
+    };
+    renderPage(mockBooking);
+  }
+
+  // ── Generate QR Code ──
+  function generateQR(ref) {
+    const qrEl = document.getElementById('qrcode');
+    if (!qrEl) return;
+    try {
+      new QRCode(qrEl, {
+        text: `${window.location.origin}/confirmation.html?ref=${ref}`,
+        width: 120, height: 120,
+        colorDark: '#07080a',
+        colorLight: '#ede8e0',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } catch(e) {
+      qrEl.innerHTML = '<div style="width:120px;height:120px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--muted);text-align:center;padding:8px">QR Code</div>';
+    }
+  }
+
+  // ── Generate Banner on Canvas ──
+  async function generateBanner({ attendeeName, filmTitle, date, time, venue, numTickets, bookingRef, posterUrl }) {
+    const canvas = document.getElementById('bannerCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = 1080, H = 566;
+
+    // Background
+    const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+    bgGrad.addColorStop(0, '#0a0b0e');
+    bgGrad.addColorStop(0.5, '#0f1014');
+    bgGrad.addColorStop(1, '#07080a');
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Gold left bar
+    ctx.fillStyle = '#c9a84c';
+    ctx.fillRect(0, 0, 6, H);
+
+    // Subtle diagonal lines pattern
+    ctx.strokeStyle = 'rgba(201,168,76,0.04)';
+    ctx.lineWidth = 1;
+    for (let i = -H; i < W + H; i += 40) {
+      ctx.beginPath();
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i + H, H);
+      ctx.stroke();
+    }
+
+    // Try to load poster image
+    let posterLoaded = false;
+    if (posterUrl) {
+      try {
+        const img = await loadImage(posterUrl);
+        // Left poster area
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(40, 40, 320, H - 80);
+        ctx.clip();
+        ctx.drawImage(img, 40, 40, 320, H - 80);
+        ctx.restore();
+        // Overlay on poster
+        const posterFade = ctx.createLinearGradient(40, 0, 360, 0);
+        posterFade.addColorStop(0, 'rgba(7,8,10,0)');
+        posterFade.addColorStop(1, 'rgba(7,8,10,0.85)');
+        ctx.fillStyle = posterFade;
+        ctx.fillRect(40, 40, 320, H - 80);
+        posterLoaded = true;
+      } catch(e) { /* no poster */ }
+    }
+
+    if (!posterLoaded) {
+      // Placeholder box
+      ctx.fillStyle = 'rgba(201,168,76,0.06)';
+      ctx.fillRect(40, 40, 280, H - 80);
+      ctx.fillStyle = 'rgba(201,168,76,0.3)';
+      ctx.font = '80px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🎬', 180, H / 2 + 20);
+    }
+
+    // Right content area
+    const rx = posterLoaded ? 410 : 360;
+
+    // FEST NAME
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#c9a84c';
+    ctx.font = '600 13px DM Sans, sans-serif';
+    ctx.letterSpacing = '0.2em';
+    ctx.fillText('CINEVERSE FILM FESTIVAL 2026', rx, 80);
+
+    // Divider line
+    ctx.fillStyle = 'rgba(201,168,76,0.3)';
+    ctx.fillRect(rx, 95, W - rx - 56, 1);
+
+    // FILM TITLE
+    ctx.fillStyle = '#ede8e0';
+    const titleSize = filmTitle.length > 20 ? 68 : filmTitle.length > 14 ? 80 : 96;
+    ctx.font = `900 ${titleSize}px Bebas Neue, sans-serif`;
+    ctx.letterSpacing = '0.03em';
+
+    // Word wrap title
+    const words = filmTitle.toUpperCase().split(' ');
+    let line = '', lines = [], maxW = W - rx - 60;
+    ctx.font = `${titleSize}px Bebas Neue, sans-serif`;
+    for (const word of words) {
+      const test = line ? line + ' ' + word : word;
+      if (ctx.measureText(test).width > maxW && line) {
+        lines.push(line); line = word;
+      } else { line = test; }
+    }
+    lines.push(line);
+
+    let titleY = 160;
+    lines.forEach((l, i) => {
+      if (i === 0) ctx.fillStyle = '#ede8e0';
+      if (i === 1) ctx.fillStyle = '#c9a84c';
+      if (i >= 2) ctx.fillStyle = 'rgba(237,232,224,0.5)';
+      ctx.fillText(l, rx, titleY + i * (titleSize + 8));
+    });
+
+    // Details block
+    const detailY = titleY + lines.length * (titleSize + 8) + 24;
+
+    ctx.font = '400 16px DM Sans, sans-serif';
+    ctx.fillStyle = 'rgba(237,232,224,0.45)';
+    ctx.fillText('ATTENDING', rx, detailY);
+
+    ctx.font = '500 22px DM Sans, sans-serif';
+    ctx.fillStyle = '#ede8e0';
+    ctx.fillText(attendeeName.toUpperCase(), rx, detailY + 30);
+
+    // Info items
+    const infoY = detailY + 70;
+    const infoItems = [
+      { icon: '📅', label: date },
+      { icon: '🕐', label: time },
+      { icon: '📍', label: venue },
+      { icon: '🎟', label: `${numTickets} Ticket${numTickets > 1 ? 's' : ''}` },
+    ];
+
+    ctx.font = '400 17px DM Sans, sans-serif';
+    infoItems.forEach((item, i) => {
+      const iy = infoY + i * 36;
+      ctx.fillStyle = 'rgba(237,232,224,0.5)';
+      ctx.fillText(item.icon, rx, iy);
+      ctx.fillStyle = '#ede8e0';
+      ctx.fillText(item.label, rx + 30, iy);
+    });
+
+    // "I'm Attending" badge
+    const badgeY = H - 90;
+    ctx.fillStyle = '#c9a84c';
+    ctx.fillRect(rx, badgeY, 240, 44);
+    ctx.fillStyle = '#07080a';
+    ctx.font = '700 14px DM Sans, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText("I'M ATTENDING  ◆", rx + 120, badgeY + 27);
+
+    // Booking ref bottom right
+    ctx.textAlign = 'right';
+    ctx.font = '400 13px DM Sans, sans-serif';
+    ctx.fillStyle = 'rgba(201,168,76,0.5)';
+    ctx.fillText(`REF: ${bookingRef}`, W - 40, H - 30);
+
+    // Bottom border line
+    ctx.fillStyle = '#c9a84c';
+    ctx.fillRect(0, H - 4, W, 4);
+  }
+
+  function loadImage(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  // ── Download Banner ──
+  function downloadBanner() {
+    const canvas = document.getElementById('bannerCanvas');
+    if (!canvas) return;
+    const link = document.createElement('a');
+    link.download = `cineverse-${bookingData?.booking_ref || 'ticket'}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+
+  // ── Scroll to Banner ──
+  function scrollToBanner() {
+    document.getElementById('bannerSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // ── Error state ──
+  function showError(msg) {
+    document.getElementById('mainContent').innerHTML = `
+      <div class="error-state">
+        <div class="error-icon">📋</div>
+        <div class="error-title">Booking Not Found</div>
+        <p class="error-msg">${msg}</p>
+        <a href="index.html" style="color:var(--gold);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--gold-dim);padding-bottom:2px;">← Browse Films</a>
+      </div>`;
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  init();
+</script>
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CineVerse Film Festival 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07080a;
+      --surface: #0f1014;
+      --surface2: #16181d;
+      --gold: #c9a84c;
+      --gold-light: #e2c97e;
+      --gold-dim: #7a6330;
+      --white: #ede8e0;
+      --muted: #5a5650;
+      --accent: #b03a2e;
+      --border: rgba(201,168,76,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 56px;
+      background: linear-gradient(to bottom, rgba(7,8,10,0.98) 0%, transparent 100%);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+    nav.scrolled { border-bottom-color: var(--border); }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.7rem;
+      letter-spacing: 0.18em;
+      color: var(--gold);
+      text-decoration: none;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo span { color: var(--white); }
+    .nav-logo-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; display: inline-block; }
+    .nav-center {
+      display: flex; gap: 36px;
+      position: absolute; left: 50%; transform: translateX(-50%);
+    }
+    .nav-center a {
+      color: var(--muted); text-decoration: none;
+      font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-center a:hover { color: var(--white); }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-tag {
+      font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--gold-dim); border: 1px solid var(--border); padding: 5px 14px;
+    }
+    .nav-tickets {
+      background: var(--gold); color: var(--bg); border: none;
+      padding: 9px 22px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer; text-decoration: none;
+      transition: background 0.2s; display: inline-block;
+    }
+    .nav-tickets:hover { background: var(--gold-light); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: end;
+      padding: 0 56px 80px;
+      position: relative; overflow: hidden; gap: 40px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 70% 20%, rgba(201,168,76,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(176,58,46,0.04) 0%, transparent 50%),
+        linear-gradient(160deg, #0c0d10 0%, #07080a 100%);
+    }
+    .hero-strip {
+      position: absolute; top: 0; right: 200px;
+      width: 1px; height: 100%;
+      background: linear-gradient(to bottom, transparent 0%, var(--border) 20%, var(--border) 80%, transparent 100%);
+    }
+    .hero-strip::before {
+      content: ''; position: absolute; left: -60px;
+      width: 1px; height: 100%; background: inherit; opacity: 0.4;
+    }
+    .hero-left { position: relative; z-index: 1; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      border: 1px solid var(--border); padding: 7px 16px; margin-bottom: 28px;
+      opacity: 0; animation: fadeUp 0.7s 0.1s forwards;
+    }
+    .hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+    .hero-badge span { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5.5rem, 11vw, 10.5rem);
+      line-height: 0.88; letter-spacing: 0.02em;
+      opacity: 0; animation: fadeUp 0.8s 0.25s forwards;
+    }
+    .hero-title .line2 { color: var(--gold); display: block; padding-left: 20px; }
+    .hero-title .line3 { display: block; -webkit-text-stroke: 1px rgba(237,232,224,0.25); color: transparent; padding-left: 40px; }
+    .hero-desc {
+      font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-style: italic;
+      color: var(--muted); line-height: 1.7; max-width: 380px; margin-top: 28px;
+      opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+    }
+    .hero-actions {
+      display: flex; gap: 14px; margin-top: 36px;
+      opacity: 0; animation: fadeUp 0.8s 0.55s forwards;
+    }
+    .btn-primary {
+      background: var(--gold); color: var(--bg); border: none;
+      padding: 14px 34px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer; text-decoration: none;
+      display: inline-block; transition: all 0.2s;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent; color: var(--white);
+      border: 1px solid rgba(237,232,224,0.15);
+      padding: 14px 34px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--white); }
+    .hero-right {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column; align-items: flex-end; gap: 20px;
+      opacity: 0; animation: fadeUp 0.8s 0.7s forwards;
+    }
+    .hero-stat-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1px; border: 1px solid var(--border); background: var(--border);
+    }
+    .hero-stat { background: var(--bg); padding: 22px 28px; }
+    .hero-stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; color: var(--gold); line-height: 1; }
+    .hero-stat-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+    .hero-date-card {
+      border: 1px solid var(--border); padding: 18px 28px; width: 100%;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .hero-date-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+    .hero-date-val { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--white); }
+    .hero-date-sep { width: 30px; height: 1px; background: var(--border); }
+
+    /* TICKER */
+    .ticker-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 13px 0; background: rgba(201,168,76,0.03);
+    }
+    .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
+    .ticker-item { font-family: 'Bebas Neue', sans-serif; font-size: 0.82rem; letter-spacing: 0.22em; color: var(--gold-dim); padding: 0 44px; }
+    .ticker-sep { color: var(--accent); margin: 0 8px; }
+
+    /* STATS */
+    .stats-bar {
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      display: grid; grid-template-columns: repeat(4,1fr);
+      background: var(--border); gap: 1px;
+    }
+    .stat-cell { background: var(--surface); padding: 44px 56px; }
+    .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 4rem; color: var(--gold); line-height: 1; }
+    .stat-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+    .stat-sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.85rem; color: var(--gold-dim); margin-top: 2px; }
+
+    /* SECTION */
+    section { padding: 96px 56px; }
+    .section-eyebrow { font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.8rem, 5vw, 4.2rem); letter-spacing: 0.04em; line-height: 0.95; }
+    .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px; }
+    .see-all {
+      font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--muted);
+      padding-bottom: 2px; transition: color 0.2s, border-color 0.2s; white-space: nowrap;
+    }
+    .see-all:hover { color: var(--white); border-color: var(--white); }
+
+    /* FILTERS */
+    .filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 44px; }
+    .filter-btn {
+      background: transparent; border: 1px solid rgba(237,232,224,0.1);
+      color: var(--muted); padding: 7px 20px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .filter-btn:hover { color: var(--white); border-color: rgba(237,232,224,0.3); }
+    .filter-btn.active { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+
+    /* FILM GRID */
+    .films-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; }
+    .films-grid .film-card:first-child { grid-column: span 2; grid-row: span 2; }
+    .film-card { position: relative; overflow: hidden; cursor: pointer; background: var(--surface); aspect-ratio: 2/3; }
+    .film-card:first-child { aspect-ratio: unset; }
+    .film-poster-img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .film-card:hover .film-poster-img { transform: scale(1.06); }
+    .film-placeholder {
+      width: 100%; height: 100%; min-height: 300px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); gap: 8px;
+    }
+    .film-placeholder-icon { font-size: 2.5rem; opacity: 0.3; }
+    .film-placeholder-text { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+    .film-gradient {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(7,8,10,0.95) 0%, rgba(7,8,10,0.3) 50%, transparent 100%);
+    }
+    .film-info {
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 24px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .film-genre-tag {
+      display: inline-block; background: var(--gold); color: var(--bg);
+      font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 3px 9px; margin-bottom: 8px;
+    }
+    .film-title-card { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.04em; line-height: 1.05; }
+    .film-card:first-child .film-title-card { font-size: 2.4rem; }
+    .film-director { font-size: 0.75rem; color: rgba(237,232,224,0.45); margin-top: 3px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+    .film-hover-info {
+      position: absolute; bottom: 0; left: 0; right: 0; padding: 24px;
+      opacity: 0; transform: translateY(8px);
+      transition: opacity 0.3s, transform 0.3s;
+      background: linear-gradient(to top, rgba(7,8,10,1) 0%, transparent 100%);
+    }
+    .film-card:hover .film-hover-info { opacity: 1; transform: translateY(0); }
+    .film-card:hover .film-info { transform: translateY(-110px); opacity: 0; }
+    .film-meta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+    .film-meta-item { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.05em; }
+    .film-cta {
+      width: 100%; background: var(--gold); color: var(--bg); border: none;
+      padding: 11px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer; transition: background 0.2s;
+    }
+    .film-cta:hover { background: var(--gold-light); }
+    .featured-badge {
+      position: absolute; top: 16px; left: 16px; z-index: 2;
+      background: var(--accent); color: var(--white);
+      font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 4px 10px;
+    }
+
+    /* SKELETON */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite;
+    }
+    .skeleton-card { aspect-ratio: 2/3; }
+    .skeleton-card:first-child { grid-column: span 2; grid-row: span 2; aspect-ratio: unset; min-height: 400px; }
+
+    /* ERROR / EMPTY */
+    .error-state { grid-column: 1/-1; text-align: center; padding: 80px 20px; border: 1px solid var(--border); }
+    .error-icon { font-size: 2.5rem; margin-bottom: 16px; opacity: 0.5; }
+    .error-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .error-msg { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; line-height: 1.6; }
+    .empty-state { grid-column: 1/-1; text-align: center; padding: 60px; color: var(--muted); font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.1rem; }
+
+    /* FOOTER */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 64px 56px 36px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.15em; color: var(--gold); margin-bottom: 12px; }
+    .footer-brand-logo span { color: var(--muted); }
+    .footer-tagline { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 0.9rem; color: var(--muted); line-height: 1.6; max-width: 240px; }
+    .footer-col h4 { font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 18px; }
+    .footer-col a { display: block; color: var(--muted); text-decoration: none; font-size: 0.82rem; margin-bottom: 10px; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--white); }
+    .footer-bottom {
+      padding-top: 32px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.7rem; color: var(--muted); letter-spacing: 0.08em;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1100px) {
+      nav { padding: 18px 28px; }
+      .nav-center { display: none; }
+      .hero { padding: 0 28px 64px; grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      section { padding: 72px 28px; }
+      .films-grid { grid-template-columns: repeat(2,1fr); }
+      .films-grid .film-card:first-child { grid-column: span 2; }
+      .stats-bar { grid-template-columns: repeat(2,1fr); }
+      .stat-cell { padding: 32px 28px; }
+      footer { padding: 48px 28px 28px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .nav-tag { display: none; }
+      .hero { padding: 0 20px 56px; }
+      .hero-title { font-size: 4rem; }
+      section { padding: 56px 20px; }
+      .films-grid { grid-template-columns: 1fr; }
+      .films-grid .film-card:first-child { grid-column: span 1; }
+      .film-hover-info { opacity: 1; transform: none; }
+      .film-card:hover .film-info { transform: none; opacity: 1; }
+      .section-header { flex-direction: column; align-items: flex-start; gap: 14px; }
+      footer { padding: 40px 20px 24px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-dot"></span>Cine<span>Verse</span>
+  </a>
+  <div class="nav-center">
+    <a href="#films">Programme</a>
+    <a href="#">Venues</a>
+    <a href="#">Jury</a>
+    <a href="#">About</a>
+  </div>
+  <div class="nav-right">
+    <span class="nav-tag">Mar 20–28 · 2026</span>
+    <a href="#films" class="nav-tickets">Get Tickets</a>
+  </div>
+</nav>
+
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-strip"></div>
+  <div class="hero-left">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      <span>Now Open · 12th Annual Edition</span>
+    </div>
+    <h1 class="hero-title">
+      Film<span class="line2">Fest</span><span class="line3">2026</span>
+    </h1>
+    <p class="hero-desc">Eight days of world cinema, emerging voices, and stories that refuse to be forgotten.</p>
+    <div class="hero-actions">
+      <a href="#films" class="btn-primary">Browse Films</a>
+      <a href="#" class="btn-outline">Full Schedule</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stat-grid">
+      <div class="hero-stat">
+        <div class="hero-stat-num" id="heroStatFilms">—</div>
+        <div class="hero-stat-label">Films</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">8</div>
+        <div class="hero-stat-label">Days</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">4</div>
+        <div class="hero-stat-label">Venues</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">32</div>
+        <div class="hero-stat-label">Countries</div>
+      </div>
+    </div>
+    <div class="hero-date-card">
+      <div>
+        <div class="hero-date-label">Opens</div>
+        <div class="hero-date-val">March 20, 2026</div>
+      </div>
+      <div class="hero-date-sep"></div>
+      <div>
+        <div class="hero-date-label">Closes</div>
+        <div class="hero-date-val">March 28, 2026</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">World Premiere <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Documentary Shorts <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Indian Competition <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Retrospective · Satyajit Ray <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">New Voices <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">International Panorama <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Special Screenings <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">World Premiere <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Documentary Shorts <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Indian Competition <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Retrospective · Satyajit Ray <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">New Voices <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">International Panorama <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Special Screenings <span class="ticker-sep">◆</span></span>
+  </div>
+</div>
+
+<div class="stats-bar reveal">
+  <div class="stat-cell">
+    <div class="stat-num" id="statFilms">—</div>
+    <div class="stat-label">Films Screening</div>
+    <div class="stat-sub">Official Selection</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num">8</div>
+    <div class="stat-label">Festival Days</div>
+    <div class="stat-sub">March 20 – 28</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num">4</div>
+    <div class="stat-label">Screening Venues</div>
+    <div class="stat-sub">Across Kochi</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-num">32</div>
+    <div class="stat-label">Countries</div>
+    <div class="stat-sub">Represented</div>
+  </div>
+</div>
+
+<section id="films">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-eyebrow">Official Selection 2026</p>
+      <h2 class="section-title">Now Showing</h2>
+    </div>
+    <a href="#" class="see-all">View Full Programme →</a>
+  </div>
+  <div class="filters reveal" id="filters">
+    <button class="filter-btn active" data-genre="all">All Films</button>
+    <button class="filter-btn" data-genre="drama">Drama</button>
+    <button class="filter-btn" data-genre="documentary">Documentary</button>
+    <button class="filter-btn" data-genre="comedy">Comedy</button>
+    <button class="filter-btn" data-genre="thriller">Thriller</button>
+    <button class="filter-btn" data-genre="short">Short Film</button>
+    <button class="filter-btn" data-genre="animation">Animation</button>
+    <button class="filter-btn" data-genre="other">Other</button>
+  </div>
+  <div class="films-grid" id="films-grid">
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-logo">Cine<span>Verse</span></div>
+      <p class="footer-tagline">International Film Festival celebrating world cinema since 2014. Kochi, Kerala.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Festival</h4>
+      <a href="#">Programme</a>
+      <a href="#">Jury & Awards</a>
+      <a href="#">Venues</a>
+      <a href="#">Archive</a>
+    </div>
+    <div class="footer-col">
+      <h4>Tickets</h4>
+      <a href="#">Book Tickets</a>
+      <a href="#">My Bookings</a>
+      <a href="#">Festival Pass</a>
+      <a href="#">Group Bookings</a>
+    </div>
+    <div class="footer-col">
+      <h4>Info</h4>
+      <a href="#">About</a>
+      <a href="#">Press</a>
+      <a href="#">Contact</a>
+      <a href="#">FAQs</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 CineVerse Film Festival. All rights reserved.</span>
+    <span>Kochi · Kerala · India</span>
+  </div>
+</footer>
+
+<script>
+  const API = 'http://127.0.0.1:8000/api';
+  let allFilms = [];
+
+  async function loadFilms() {
+    try {
+      const res = await fetch(`${API}/films/`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      allFilms = Array.isArray(data) ? data : (data.results || []);
+      renderFilms(allFilms);
+      updateStats(allFilms.length);
+    } catch (err) {
+      console.error('Failed to load films:', err);
+      showError();
+    }
+  }
+
+  function renderFilms(films) {
+    const grid = document.getElementById('films-grid');
+    if (!films.length) {
+      grid.innerHTML = `<div class="empty-state">No films found for this selection.</div>`;
+      return;
+    }
+    grid.innerHTML = films.map((film, i) => {
+      const posterHTML = film.poster_url
+        ? `<img class="film-poster-img" src="${film.poster_url}" alt="${esc(film.title)}" loading="lazy"
+             onerror="this.outerHTML='<div class=film-placeholder><div class=film-placeholder-icon>🎬</div></div>'">`
+        : `<div class="film-placeholder"><div class="film-placeholder-icon">🎬</div><div class="film-placeholder-text">${esc(film.genre)}</div></div>`;
+
+      return `
+      <div class="film-card reveal" data-genre="${esc(film.genre)}" style="transition-delay:${Math.min(i*0.05,0.4)}s">
+        ${film.is_featured ? '<div class="featured-badge">Featured</div>' : ''}
+        ${posterHTML}
+        <div class="film-gradient"></div>
+        <div class="film-info">
+          <span class="film-genre-tag">${esc(film.genre)}</span>
+          <div class="film-title-card">${esc(film.title)}</div>
+          <div class="film-director">Dir. ${esc(film.director)}</div>
+        </div>
+        <div class="film-hover-info">
+          <span class="film-genre-tag">${esc(film.genre)}</span>
+          <div class="film-title-card">${esc(film.title)}</div>
+          <div class="film-director" style="margin-bottom:12px">Dir. ${esc(film.director)}</div>
+          <div class="film-meta-row">
+            <span class="film-meta-item">🕐 ${film.duration_mins} min</span>
+            <span class="film-meta-item">🌐 ${esc(film.language)}</span>
+            <span class="film-meta-item">🎟 ${film.showtimes_count || 0} shows</span>
+          </div>
+          <button class="film-cta" onclick="viewShowtimes('${film.id}')">View Showtimes</button>
+        </div>
+      </div>`;
+    }).join('');
+    observeReveal();
+  }
+
+  function showError() {
+    document.getElementById('films-grid').innerHTML = `
+      <div class="error-state">
+        <div class="error-icon">📡</div>
+        <div class="error-title">Connection Failed</div>
+        <p class="error-msg">Could not reach the server at ${API}<br>Make sure your Django backend is running.</p>
+        <button class="btn-primary" onclick="loadFilms()" style="margin-top:8px">Try Again</button>
+      </div>`;
+  }
+
+  function updateStats(count) {
+    document.getElementById('statFilms').textContent = count;
+    document.getElementById('heroStatFilms').textContent = count;
+  }
+
+  document.getElementById('filters').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn) return;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const genre = btn.dataset.genre;
+    renderFilms(genre === 'all' ? allFilms : allFilms.filter(f => f.genre === genre));
+  });
+
+  function viewShowtimes(id) {
+    window.location.href = `showtimes.html?film=${id}`;
+  }
+
+  function observeReveal() {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => io.observe(el));
+  }
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  observeReveal();
+  loadFilms();
+</script>
+</body>
+</html>

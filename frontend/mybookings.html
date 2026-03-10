@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Bookings — CineVerse Film Festival 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07080a;
+      --surface: #0f1014;
+      --surface2: #16181d;
+      --gold: #c9a84c;
+      --gold-light: #e2c97e;
+      --gold-dim: #7a6330;
+      --white: #ede8e0;
+      --muted: #5a5650;
+      --accent: #b03a2e;
+      --green: #27ae60;
+      --red: #e74c3c;
+      --border: rgba(201,168,76,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9998;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 56px;
+      background: rgba(7,8,10,0.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem;
+      letter-spacing: 0.18em; color: var(--gold); text-decoration: none;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo span { color: var(--white); }
+    .nav-logo-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+    .nav-links { display: flex; gap: 24px; align-items: center; }
+    .nav-link {
+      font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--white); }
+    .nav-link.active { color: var(--gold); }
+    .nav-logout {
+      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); background: none; border: 1px solid rgba(237,232,224,0.08);
+      padding: 7px 16px; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    }
+    .nav-logout:hover { color: var(--red); border-color: var(--red); }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding: 56px 56px 40px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(to bottom, var(--surface) 0%, transparent 100%);
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .page-eyebrow { font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+    .page-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: 0.04em; line-height: 1; margin-bottom: 6px; }
+    .page-sub { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1rem; color: var(--muted); }
+
+    .header-row {
+      display: flex; justify-content: space-between; align-items: flex-end;
+    }
+    .header-stats { display: flex; gap: 32px; }
+    .hstat { text-align: right; }
+    .hstat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold); line-height: 1; }
+    .hstat-label { font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+
+    /* MAIN */
+    .main { max-width: 1100px; margin: 0 auto; padding: 48px 56px 96px; }
+
+    /* FILTER BAR */
+    .filter-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 32px; flex-wrap: wrap; gap: 16px;
+    }
+    .status-filters { display: flex; gap: 6px; }
+    .status-btn {
+      background: transparent; border: 1px solid rgba(237,232,224,0.1);
+      color: var(--muted); padding: 7px 18px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .status-btn:hover { color: var(--white); border-color: rgba(237,232,224,0.3); }
+    .status-btn.active { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+    .sort-select {
+      background: var(--surface); border: 1px solid rgba(237,232,224,0.1);
+      color: var(--muted); padding: 8px 16px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem; letter-spacing: 0.08em; cursor: pointer; outline: none;
+    }
+    .sort-select:focus { border-color: var(--gold); }
+
+    /* BOOKING CARDS */
+    .bookings-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .booking-card {
+      background: var(--surface);
+      border: 1px solid transparent;
+      display: grid;
+      grid-template-columns: 90px 1fr auto;
+      gap: 0;
+      overflow: hidden;
+      transition: border-color 0.2s;
+      animation: fadeUp 0.5s ease both;
+      position: relative;
+    }
+    .booking-card:hover { border-color: var(--border); }
+    .booking-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      transition: background 0.2s;
+    }
+    .booking-card.confirmed::before { background: var(--green); }
+    .booking-card.pending::before { background: var(--gold); }
+    .booking-card.cancelled::before { background: var(--muted); }
+    .booking-card.failed::before { background: var(--red); }
+
+    /* Poster column */
+    .booking-poster {
+      width: 90px; height: 100%;
+      min-height: 130px;
+      overflow: hidden; flex-shrink: 0; position: relative;
+    }
+    .booking-poster img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.5s;
+    }
+    .booking-card:hover .booking-poster img { transform: scale(1.05); }
+    .booking-poster-placeholder {
+      width: 100%; height: 100%; min-height: 130px;
+      background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; opacity: 0.4;
+    }
+
+    /* Info column */
+    .booking-info { padding: 20px 24px; flex: 1; }
+    .booking-info-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .booking-film-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; letter-spacing: 0.04em; line-height: 1;
+      margin-bottom: 3px;
+    }
+    .booking-director {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 0.82rem; color: var(--muted);
+    }
+    .booking-status-badge {
+      font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: 1px; flex-shrink: 0; margin-left: 12px;
+    }
+    .badge-confirmed { background: rgba(39,174,96,0.15); color: var(--green); border: 1px solid rgba(39,174,96,0.3); }
+    .badge-pending { background: rgba(201,168,76,0.12); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+    .badge-cancelled { background: rgba(90,86,80,0.2); color: var(--muted); border: 1px solid rgba(90,86,80,0.3); }
+    .badge-failed { background: rgba(231,76,60,0.12); color: var(--red); border: 1px solid rgba(231,76,60,0.3); }
+
+    .booking-meta {
+      display: flex; gap: 24px; flex-wrap: wrap;
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .booking-meta-item { display: flex; align-items: center; gap: 6px; }
+    .booking-ref-label {
+      font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); margin-top: 12px;
+    }
+    .booking-ref-val { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.1em; color: var(--gold-dim); }
+
+    /* Actions column */
+    .booking-actions {
+      padding: 20px 24px; display: flex; flex-direction: column;
+      justify-content: center; gap: 8px; min-width: 160px;
+      border-left: 1px solid rgba(237,232,224,0.05);
+    }
+    .booking-amount {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem;
+      color: var(--gold); letter-spacing: 0.05em; text-align: center;
+      margin-bottom: 4px;
+    }
+    .booking-tickets-count {
+      font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); text-align: center; margin-bottom: 12px;
+    }
+    .btn-view {
+      display: block; width: 100%; text-align: center;
+      background: transparent; border: 1px solid rgba(237,232,224,0.12);
+      color: var(--white); padding: 9px 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.72rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none; transition: all 0.2s;
+    }
+    .btn-view:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-cancel {
+      display: block; width: 100%; text-align: center;
+      background: transparent; border: 1px solid rgba(231,76,60,0.2);
+      color: var(--red); padding: 9px 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.72rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-cancel:hover { background: rgba(231,76,60,0.1); }
+    .btn-banner {
+      display: block; width: 100%; text-align: center;
+      background: var(--gold); border: none;
+      color: var(--bg); padding: 9px 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none; transition: background 0.2s;
+    }
+    .btn-banner:hover { background: var(--gold-light); }
+
+    /* SKELETON */
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite;
+    }
+    .skeleton-card { height: 130px; margin-bottom: 2px; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center; padding: 100px 20px;
+      border: 1px solid var(--border);
+    }
+    .empty-icon { font-size: 3rem; margin-bottom: 20px; opacity: 0.3; }
+    .empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.05em; margin-bottom: 10px; }
+    .empty-msg { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 28px; }
+
+    /* ERROR STATE */
+    .error-state { text-align: center; padding: 100px 20px; }
+    .error-icon { font-size: 2.5rem; margin-bottom: 16px; opacity: 0.4; }
+    .error-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .error-msg { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 24px; }
+
+    /* CANCEL MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(7,8,10,0.88); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border);
+      width: 100%; max-width: 440px; padding: 36px;
+      transform: translateY(16px); transition: transform 0.3s; position: relative;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-close {
+      position: absolute; top: 14px; right: 16px;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.3rem; cursor: pointer;
+    }
+    .modal-close:hover { color: var(--white); }
+    .modal-icon { font-size: 2rem; margin-bottom: 14px; }
+    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.04em; margin-bottom: 10px; }
+    .modal-msg { font-size: 0.85rem; color: var(--muted); line-height: 1.6; margin-bottom: 28px; }
+    .modal-film { color: var(--white); font-weight: 500; }
+    .modal-actions { display: flex; gap: 12px; }
+    .btn-confirm-cancel {
+      flex: 1; background: var(--red); color: var(--white); border: none;
+      padding: 13px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-confirm-cancel:hover { opacity: 0.85; }
+    .btn-confirm-cancel:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-keep {
+      flex: 1; background: transparent; color: var(--white);
+      border: 1px solid rgba(237,232,224,0.15);
+      padding: 13px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; letter-spacing: 0.1em;
+      text-transform: uppercase; cursor: pointer; transition: border-color 0.2s;
+    }
+    .btn-keep:hover { border-color: var(--white); }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 32px; right: 32px; z-index: 9999;
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 14px 20px; font-size: 0.82rem;
+      display: flex; align-items: center; gap: 10px;
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.3s ease; max-width: 320px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-left: 3px solid var(--green); }
+    .toast.error { border-left: 3px solid var(--red); }
+
+    /* FOOTER */
+    footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 32px 56px; display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.7rem; color: var(--muted);
+    }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--gold); letter-spacing: 0.15em; }
+    .footer-logo span { color: var(--muted); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes shimmer { 0% { background-position:200% 0; } 100% { background-position:-200% 0; } }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .page-header { padding: 40px 24px 28px; }
+      .header-row { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .header-stats { gap: 20px; }
+      .main { padding: 36px 24px 72px; }
+      .booking-card { grid-template-columns: 70px 1fr; }
+      .booking-actions { grid-column: 1/-1; border-left: none; border-top: 1px solid rgba(237,232,224,0.05); flex-direction: row; flex-wrap: wrap; padding: 14px 20px; }
+      .booking-amount { display: none; }
+      .booking-tickets-count { display: none; }
+      footer { padding: 24px; flex-direction: column; gap: 8px; }
+    }
+    @media (max-width: 560px) {
+      nav { padding: 14px 20px; }
+      .nav-links { gap: 14px; }
+      .booking-card { grid-template-columns: 1fr; }
+      .booking-poster { width: 100%; height: 120px; }
+      .booking-poster img { object-position: center 30%; }
+      .filter-bar { flex-direction: column; align-items: flex-start; }
+      .modal { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <span class="nav-logo-dot"></span>Cine<span>Verse</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Films</a>
+    <a href="my-bookings.html" class="nav-link active">My Bookings</a>
+    <button class="nav-logout" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="header-row">
+    <div>
+      <p class="page-eyebrow">My Account</p>
+      <h1 class="page-title">My Bookings</h1>
+      <p class="page-sub" id="userGreeting">Loading your bookings...</p>
+    </div>
+    <div class="header-stats">
+      <div class="hstat">
+        <div class="hstat-num" id="statTotal">—</div>
+        <div class="hstat-label">Total Bookings</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num" id="statConfirmed">—</div>
+        <div class="hstat-label">Confirmed</div>
+      </div>
+      <div class="hstat">
+        <div class="hstat-num" id="statTickets">—</div>
+        <div class="hstat-label">Tickets</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="status-filters" id="statusFilters">
+      <button class="status-btn active" data-status="all">All</button>
+      <button class="status-btn" data-status="confirmed">Confirmed</button>
+      <button class="status-btn" data-status="pending">Pending</button>
+      <button class="status-btn" data-status="cancelled">Cancelled</button>
+    </div>
+    <select class="sort-select" id="sortSelect" onchange="applySortFilter()">
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+      <option value="upcoming">Upcoming Shows</option>
+    </select>
+  </div>
+
+  <!-- BOOKINGS LIST -->
+  <div class="bookings-list" id="bookingsList">
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+    <div class="skeleton skeleton-card"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Cine<span>Verse</span></div>
+  <span>© 2026 CineVerse Film Festival · Kochi, Kerala</span>
+</footer>
+
+<!-- CANCEL MODAL -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">Cancel Booking?</div>
+    <p class="modal-msg">Are you sure you want to cancel your booking for <span class="modal-film" id="cancelFilmName">this film</span>? This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn-confirm-cancel" id="btnConfirmCancel" onclick="executeCancel()">
+        Yes, Cancel
+      </button>
+      <button class="btn-keep" onclick="closeModal()">Keep Booking</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = 'http://127.0.0.1:8000/api';
+  const accessToken = localStorage.getItem('access_token');
+
+  let allBookings = [];
+  let activeStatus = 'all';
+  let cancelBookingId = null;
+
+  // ── Auth guard ──
+  if (!accessToken) {
+    window.location.href = `login.html?next=my-bookings.html`;
+  }
+
+  // ── Init ──
+  async function init() {
+    await loadProfile();
+    await loadBookings();
+  }
+
+  // ── Load user profile ──
+  async function loadProfile() {
+    try {
+      const res = await fetch(`${API}/auth/profile/`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      if (res.status === 401) { logout(); return; }
+      const data = await res.json();
+      document.getElementById('userGreeting').textContent =
+        `Welcome back, ${data.first_name || 'Guest'} · ${data.email}`;
+    } catch(e) { /* silent */ }
+  }
+
+  // ── Load bookings ──
+  async function loadBookings() {
+    try {
+      const res = await fetch(`${API}/bookings/my/`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      if (res.status === 401) { logout(); return; }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      allBookings = Array.isArray(data) ? data : (data.results || []);
+      updateStats(allBookings);
+      renderBookings(allBookings);
+    } catch(err) {
+      showError();
+    }
+  }
+
+  // ── Update stats ──
+  function updateStats(bookings) {
+    const confirmed = bookings.filter(b => b.status === 'confirmed');
+    const tickets = confirmed.reduce((sum, b) => sum + (b.num_tickets || 0), 0);
+    document.getElementById('statTotal').textContent = bookings.length;
+    document.getElementById('statConfirmed').textContent = confirmed.length;
+    document.getElementById('statTickets').textContent = tickets;
+  }
+
+  // ── Render bookings ──
+  function renderBookings(bookings) {
+    const list = document.getElementById('bookingsList');
+
+    if (!bookings.length) {
+      const isFiltered = activeStatus !== 'all';
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">${isFiltered ? '🔍' : '🎬'}</div>
+          <div class="empty-title">${isFiltered ? 'No ' + activeStatus + ' bookings' : 'No Bookings Yet'}</div>
+          <p class="empty-msg">${isFiltered
+            ? `You have no ${activeStatus} bookings. Try a different filter.`
+            : "You haven't booked any tickets yet. Browse our film selection and grab your seats!"
+          }</p>
+          <a href="index.html" style="display:inline-block;background:var(--gold);color:var(--bg);padding:12px 28px;font-size:.78rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">
+            Browse Films
+          </a>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = bookings.map((b, i) => {
+      const dt = new Date(b.show_date || b.booked_at);
+      const dateStr = dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      const timeStr = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+      const bookedAt = new Date(b.booked_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+      const isUpcoming = new Date(b.show_date) > new Date();
+      const status = b.status || 'pending';
+
+      return `
+      <div class="booking-card ${status}" style="animation-delay:${i * 0.06}s">
+
+        <div class="booking-poster">
+          ${b.poster_url
+            ? `<img src="${b.poster_url}" alt="${esc(b.film_title)}" loading="lazy"
+                 onerror="this.parentElement.innerHTML='<div class=booking-poster-placeholder>🎬</div>'">`
+            : `<div class="booking-poster-placeholder">🎬</div>`}
+        </div>
+
+        <div class="booking-info">
+          <div class="booking-info-top">
+            <div>
+              <div class="booking-film-title">${esc(b.film_title)}</div>
+              <div class="booking-director">${esc(b.showtime?.venue?.name || b.venue_name || 'CineVerse')}</div>
+            </div>
+            <span class="booking-status-badge badge-${status}">${status}</span>
+          </div>
+          <div class="booking-meta">
+            <div class="booking-meta-item">📅 ${dateStr}</div>
+            <div class="booking-meta-item">🕐 ${timeStr}</div>
+            <div class="booking-meta-item">🎟 ${b.num_tickets} ticket${b.num_tickets > 1 ? 's' : ''}</div>
+            <div class="booking-meta-item">📋 Booked ${bookedAt}</div>
+            ${isUpcoming && status === 'confirmed' ? '<div class="booking-meta-item" style="color:var(--green)">✓ Upcoming</div>' : ''}
+          </div>
+          <div class="booking-ref-label">Booking Ref</div>
+          <div class="booking-ref-val">${b.booking_ref}</div>
+        </div>
+
+        <div class="booking-actions">
+          <div class="booking-amount">₹${b.total_amount}</div>
+          <div class="booking-tickets-count">${b.num_tickets} Ticket${b.num_tickets > 1 ? 's' : ''}</div>
+          ${status === 'confirmed' ? `
+            <a href="confirmation.html?booking_id=${b.id}&ref=${b.booking_ref}" class="btn-banner">🖼 View & Share</a>
+            <a href="confirmation.html?booking_id=${b.id}&ref=${b.booking_ref}" class="btn-view">View Ticket</a>
+            <button class="btn-cancel" onclick="openCancelModal('${b.id}', '${esc(b.film_title)}')">Cancel</button>
+          ` : status === 'pending' ? `
+            <a href="confirmation.html?booking_id=${b.id}&ref=${b.booking_ref}" class="btn-view">Complete Payment</a>
+            <button class="btn-cancel" onclick="openCancelModal('${b.id}', '${esc(b.film_title)}')">Cancel</button>
+          ` : `
+            <a href="index.html" class="btn-view">Book Again</a>
+          `}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Filter & sort ──
+  function applySortFilter() {
+    let filtered = activeStatus === 'all'
+      ? [...allBookings]
+      : allBookings.filter(b => b.status === activeStatus);
+
+    const sort = document.getElementById('sortSelect').value;
+    if (sort === 'newest') filtered.sort((a,b) => new Date(b.booked_at) - new Date(a.booked_at));
+    if (sort === 'oldest') filtered.sort((a,b) => new Date(a.booked_at) - new Date(b.booked_at));
+    if (sort === 'upcoming') filtered.sort((a,b) => new Date(a.show_date) - new Date(b.show_date));
+
+    renderBookings(filtered);
+  }
+
+  document.getElementById('statusFilters').addEventListener('click', e => {
+    const btn = e.target.closest('.status-btn');
+    if (!btn) return;
+    document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeStatus = btn.dataset.status;
+    applySortFilter();
+  });
+
+  // ── Cancel modal ──
+  function openCancelModal(bookingId, filmTitle) {
+    cancelBookingId = bookingId;
+    document.getElementById('cancelFilmName').textContent = filmTitle;
+    document.getElementById('cancelModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('cancelModal').classList.remove('open');
+    document.body.style.overflow = '';
+    cancelBookingId = null;
+  }
+
+  async function executeCancel() {
+    if (!cancelBookingId) return;
+    const btn = document.getElementById('btnConfirmCancel');
+    btn.disabled = true;
+    btn.textContent = 'Cancelling...';
+
+    try {
+      const res = await fetch(`${API}/bookings/${cancelBookingId}/cancel/`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+      });
+      if (res.ok) {
+        closeModal();
+        showToast('Booking cancelled successfully.', 'success');
+        // Update local data
+        const booking = allBookings.find(b => b.id === cancelBookingId);
+        if (booking) booking.status = 'cancelled';
+        updateStats(allBookings);
+        applySortFilter();
+      } else {
+        const data = await res.json();
+        showToast(data.error || 'Cancellation failed.', 'error');
+      }
+    } catch(err) {
+      showToast('Network error. Please try again.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Yes, Cancel';
+    }
+  }
+
+  // ── Toast ──
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = (type === 'success' ? '✓ ' : '✕ ') + msg;
+    toast.className = `toast show ${type}`;
+    setTimeout(() => { toast.className = 'toast'; }, 3500);
+  }
+
+  // ── Error state ──
+  function showError() {
+    document.getElementById('bookingsList').innerHTML = `
+      <div class="error-state">
+        <div class="error-icon">📡</div>
+        <div class="error-title">Could Not Load</div>
+        <p class="error-msg">Failed to load your bookings.<br>Make sure your backend is running at ${API}</p>
+        <button onclick="loadBookings()" style="background:var(--gold);color:var(--bg);border:none;padding:12px 28px;font-size:.78rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;">
+          Try Again
+        </button>
+      </div>`;
+  }
+
+  // ── Logout ──
+  function logout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    window.location.href = 'login.html';
+  }
+
+  // ── Modal close on overlay click / Escape ──
+  document.getElementById('cancelModal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  init();
+</script>
+</body>
+</html>

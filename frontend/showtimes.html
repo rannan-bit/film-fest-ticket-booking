@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Showtimes — CineVerse Film Festival 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07080a;
+      --surface: #0f1014;
+      --surface2: #16181d;
+      --gold: #c9a84c;
+      --gold-light: #e2c97e;
+      --gold-dim: #7a6330;
+      --white: #ede8e0;
+      --muted: #5a5650;
+      --accent: #b03a2e;
+      --green: #27ae60;
+      --border: rgba(201,168,76,0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9998;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 56px;
+      background: rgba(7,8,10,0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem;
+      letter-spacing: 0.18em; color: var(--gold); text-decoration: none;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo span { color: var(--white); }
+    .nav-logo-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; display: inline-block; }
+    .nav-back {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--muted); text-decoration: none;
+      font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--white); }
+    .nav-back svg { width: 16px; height: 16px; }
+
+    /* FILM HERO */
+    .film-hero {
+      margin-top: 65px;
+      min-height: 480px;
+      display: grid; grid-template-columns: 320px 1fr;
+      position: relative; overflow: hidden;
+    }
+    .film-hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(7,8,10,0) 30%, var(--bg) 100%),
+                  linear-gradient(to top, var(--bg) 0%, transparent 50%);
+      z-index: 1;
+    }
+    .film-hero-poster {
+      position: relative; z-index: 0;
+    }
+    .film-hero-poster img {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block; opacity: 0.35;
+      filter: blur(2px);
+    }
+    .film-hero-poster-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, transparent 0%, var(--bg) 70%),
+                  linear-gradient(to top, var(--bg) 0%, transparent 40%);
+    }
+    .film-hero-content {
+      position: relative; z-index: 2;
+      display: flex; align-items: flex-end;
+      padding: 56px 56px 56px 0;
+      gap: 40px;
+    }
+    .film-poster-thumb {
+      width: 160px; min-width: 160px;
+      border: 1px solid var(--border);
+      overflow: hidden; flex-shrink: 0;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .film-poster-thumb img {
+      width: 100%; display: block;
+      aspect-ratio: 2/3; object-fit: cover;
+    }
+    .film-poster-thumb-placeholder {
+      width: 100%; aspect-ratio: 2/3;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface2); font-size: 2rem;
+    }
+    .film-info-block { flex: 1; }
+    .film-breadcrumb {
+      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 14px;
+    }
+    .film-title-hero {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      letter-spacing: 0.03em; line-height: 0.9;
+      margin-bottom: 14px;
+    }
+    .film-director-hero {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: 1.1rem; color: var(--muted); margin-bottom: 20px;
+    }
+    .film-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .film-tag {
+      border: 1px solid var(--border); padding: 5px 14px;
+      font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .film-tag.gold { border-color: var(--gold); color: var(--gold); }
+    .film-desc {
+      font-size: 0.88rem; color: var(--muted);
+      line-height: 1.7; max-width: 520px;
+    }
+
+    /* SHOWTIMES SECTION */
+    .showtimes-section { padding: 64px 56px 96px; }
+    .section-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 40px; padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-eyebrow { font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 0.04em; line-height: 1; }
+    .seats-legend { display: flex; gap: 20px; align-items: center; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .legend-dot.available { background: var(--green); }
+    .legend-dot.limited { background: var(--gold); }
+    .legend-dot.sold-out { background: var(--muted); }
+
+    /* SHOWTIME CARDS */
+    .showtimes-list { display: flex; flex-direction: column; gap: 2px; }
+
+    .showtime-card {
+      display: grid;
+      grid-template-columns: 120px 1fr auto auto;
+      align-items: center; gap: 32px;
+      padding: 24px 32px;
+      background: var(--surface);
+      border: 1px solid transparent;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .showtime-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 3px; background: var(--gold);
+      transform: scaleY(0); transform-origin: bottom;
+      transition: transform 0.3s;
+    }
+    .showtime-card:hover { border-color: var(--border); background: var(--surface2); }
+    .showtime-card:hover::before { transform: scaleY(1); }
+    .showtime-card.sold-out { opacity: 0.5; pointer-events: none; }
+
+    .showtime-time-block { text-align: center; }
+    .showtime-time {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem; color: var(--gold); letter-spacing: 0.05em; line-height: 1;
+    }
+    .showtime-period {
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); margin-top: 2px;
+    }
+    .showtime-date-full {
+      font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-top: 6px;
+    }
+
+    .showtime-details { }
+    .showtime-venue {
+      font-size: 1rem; font-weight: 500; color: var(--white);
+      margin-bottom: 6px;
+    }
+    .showtime-venue-sub {
+      font-size: 0.75rem; color: var(--muted);
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .showtime-venue-sub span { display: flex; align-items: center; gap: 5px; }
+
+    .showtime-seats { text-align: center; min-width: 100px; }
+    .seats-bar-wrap {
+      width: 80px; height: 4px; background: var(--surface2);
+      border-radius: 2px; margin: 0 auto 6px; overflow: hidden;
+    }
+    .seats-bar {
+      height: 100%; border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+    .seats-bar.available { background: var(--green); }
+    .seats-bar.limited { background: var(--gold); }
+    .seats-bar.sold-out { background: var(--muted); }
+    .seats-count { font-size: 0.78rem; color: var(--muted); }
+    .seats-count strong { color: var(--white); }
+    .seats-status {
+      font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+      margin-top: 3px;
+    }
+    .seats-status.available { color: var(--green); }
+    .seats-status.limited { color: var(--gold); }
+    .seats-status.sold-out { color: var(--muted); }
+
+    .showtime-action { min-width: 140px; }
+    .btn-book {
+      display: block; width: 100%;
+      background: var(--gold); color: var(--bg); border: none;
+      padding: 13px 24px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-book:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-sold-out {
+      display: block; width: 100%;
+      background: transparent; color: var(--muted);
+      border: 1px solid rgba(237,232,224,0.1);
+      padding: 13px 24px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
+      cursor: not-allowed;
+    }
+    .price-tag {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem; color: var(--white);
+      letter-spacing: 0.05em; text-align: center;
+      margin-bottom: 8px;
+    }
+    .price-tag span { font-size: 0.85rem; color: var(--muted); }
+
+    /* EMPTY / ERROR / LOADING */
+    .state-box {
+      text-align: center; padding: 80px 20px;
+      border: 1px solid var(--border);
+    }
+    .state-icon { font-size: 2.5rem; margin-bottom: 16px; opacity: 0.4; }
+    .state-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .state-msg { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin-bottom: 24px; }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite;
+    }
+    .skeleton-showtime { height: 100px; margin-bottom: 2px; }
+
+    /* BOOKING MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(7,8,10,0.85);
+      backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      width: 100%; max-width: 520px;
+      padding: 40px;
+      transform: translateY(20px);
+      transition: transform 0.3s;
+      position: relative;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: var(--muted);
+      font-size: 1.4rem; cursor: pointer; transition: color 0.2s;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--white); }
+    .modal-eyebrow { font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 0.04em; margin-bottom: 24px; }
+    .modal-film-info {
+      background: var(--surface2); padding: 16px 20px;
+      margin-bottom: 28px; border-left: 3px solid var(--gold);
+    }
+    .modal-film-name { font-weight: 500; margin-bottom: 4px; }
+    .modal-film-meta { font-size: 0.78rem; color: var(--muted); }
+    .modal-label { font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .ticket-counter {
+      display: flex; align-items: center; gap: 0;
+      border: 1px solid var(--border); width: fit-content;
+      margin-bottom: 28px;
+    }
+    .ticket-btn {
+      background: none; border: none; color: var(--white);
+      width: 48px; height: 48px; font-size: 1.4rem;
+      cursor: pointer; transition: background 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ticket-btn:hover { background: var(--surface2); }
+    .ticket-btn:disabled { color: var(--muted); cursor: not-allowed; }
+    .ticket-num {
+      width: 60px; text-align: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem;
+      color: var(--gold); border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+      line-height: 48px;
+    }
+    .modal-summary {
+      border-top: 1px solid var(--border);
+      padding-top: 20px; margin-bottom: 24px;
+    }
+    .summary-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.85rem; color: var(--muted); margin-bottom: 10px;
+    }
+    .summary-row.total {
+      font-size: 1rem; color: var(--white); font-weight: 500;
+      padding-top: 12px; border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+    .summary-row.total span:last-child { color: var(--gold); font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.05em; }
+    .btn-confirm {
+      width: 100%; background: var(--gold); color: var(--bg); border: none;
+      padding: 16px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer; transition: background 0.2s;
+    }
+    .btn-confirm:hover { background: var(--gold-light); }
+    .btn-confirm:disabled { background: var(--muted); cursor: not-allowed; }
+    .modal-note { font-size: 0.72rem; color: var(--muted); text-align: center; margin-top: 14px; line-height: 1.5; }
+
+    /* LOGIN PROMPT */
+    .login-prompt {
+      text-align: center; padding: 20px 0;
+    }
+    .login-prompt p { color: var(--muted); font-size: 0.88rem; margin-bottom: 16px; }
+    .btn-login {
+      display: inline-block; background: var(--gold); color: var(--bg); border: none;
+      padding: 12px 32px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer; text-decoration: none;
+      transition: background 0.2s;
+    }
+    .btn-login:hover { background: var(--gold-light); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s, transform 0.6s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* FOOTER */
+    footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 32px 56px; display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em;
+    }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--gold); letter-spacing: 0.15em; }
+    .footer-logo span { color: var(--muted); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav { padding: 18px 24px; }
+      .film-hero { grid-template-columns: 1fr; }
+      .film-hero-content { padding: 40px 24px; flex-direction: column; align-items: flex-start; }
+      .film-poster-thumb { width: 120px; }
+      .showtimes-section { padding: 48px 24px 72px; }
+      .showtime-card { grid-template-columns: 100px 1fr; gap: 20px; }
+      .showtime-seats { display: none; }
+      .showtime-action { grid-column: 2; }
+      footer { padding: 24px; flex-direction: column; gap: 10px; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .film-hero-content { padding: 28px 20px; }
+      .showtimes-section { padding: 36px 20px 60px; }
+      .showtime-card { grid-template-columns: 1fr; gap: 14px; padding: 20px; }
+      .showtime-time-block { text-align: left; display: flex; gap: 12px; align-items: baseline; }
+      .showtime-action { width: 100%; }
+      .modal { padding: 28px 20px; }
+      .section-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <span class="nav-logo-dot"></span>Cine<span>Verse</span>
+  </a>
+  <a href="index.html" class="nav-back">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+    Back to Films
+  </a>
+</nav>
+
+<!-- FILM HERO -->
+<div class="film-hero" id="filmHero">
+  <div class="film-hero-bg"></div>
+  <div class="film-hero-poster" id="heroBgPoster"></div>
+  <div class="film-hero-content" id="filmHeroContent">
+    <div class="film-poster-thumb" id="filmThumb">
+      <div class="film-poster-thumb-placeholder">🎬</div>
+    </div>
+    <div class="film-info-block">
+      <div class="film-breadcrumb">CineVerse 2026 · Official Selection</div>
+      <h1 class="film-title-hero" id="filmTitle">Loading...</h1>
+      <div class="film-director-hero" id="filmDirector"></div>
+      <div class="film-tags" id="filmTags"></div>
+      <p class="film-desc" id="filmDesc"></p>
+    </div>
+  </div>
+</div>
+
+<!-- SHOWTIMES -->
+<div class="showtimes-section">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-eyebrow">Book Your Seat</p>
+      <h2 class="section-title">Showtimes</h2>
+    </div>
+    <div class="seats-legend">
+      <div class="legend-item"><div class="legend-dot available"></div> Available</div>
+      <div class="legend-item"><div class="legend-dot limited"></div> Limited</div>
+      <div class="legend-item"><div class="legend-dot sold-out"></div> Sold Out</div>
+    </div>
+  </div>
+  <div class="showtimes-list" id="showtimesList">
+    <div class="skeleton skeleton-showtime"></div>
+    <div class="skeleton skeleton-showtime"></div>
+    <div class="skeleton skeleton-showtime"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Cine<span>Verse</span></div>
+  <span>© 2026 CineVerse Film Festival · Kochi, Kerala</span>
+</footer>
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-eyebrow">Reserve Your Seat</div>
+    <div class="modal-title">Book Tickets</div>
+
+    <div class="modal-film-info">
+      <div class="modal-film-name" id="modalFilmName">—</div>
+      <div class="modal-film-meta" id="modalFilmMeta">—</div>
+    </div>
+
+    <!-- Login required -->
+    <div class="login-prompt" id="loginPrompt" style="display:none">
+      <p>You need to be logged in to book tickets.</p>
+      <a href="login.html" class="btn-login">Login / Register</a>
+    </div>
+
+    <!-- Booking form -->
+    <div id="bookingForm">
+      <div class="modal-label">Number of Tickets</div>
+      <div class="ticket-counter">
+        <button class="ticket-btn" id="ticketMinus" onclick="changeTickets(-1)">−</button>
+        <div class="ticket-num" id="ticketNum">1</div>
+        <button class="ticket-btn" id="ticketPlus" onclick="changeTickets(1)">+</button>
+      </div>
+
+      <div class="modal-summary">
+        <div class="summary-row"><span>Price per ticket</span><span id="summaryPrice">₹0</span></div>
+        <div class="summary-row"><span>Tickets</span><span id="summaryTickets">×1</span></div>
+        <div class="summary-row total"><span>Total</span><span id="summaryTotal">₹0</span></div>
+      </div>
+
+      <button class="btn-confirm" id="btnConfirm" onclick="confirmBooking()">Proceed to Payment</button>
+      <p class="modal-note">Tickets are held for 10 minutes after booking.<br>Payment required to confirm your seat.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = 'http://127.0.0.1:8000/api';
+
+  // Get film ID from URL
+  const params = new URLSearchParams(window.location.search);
+  const filmId = params.get('film');
+
+  let currentFilm = null;
+  let selectedShowtime = null;
+  let ticketCount = 1;
+  let accessToken = localStorage.getItem('access_token') || null;
+
+  // ── Load film + showtimes ──
+  async function init() {
+    if (!filmId) {
+      showShowtimeError('No film selected. <a href="index.html" style="color:var(--gold)">Go back</a>');
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/films/${filmId}/`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      currentFilm = await res.json();
+      renderFilmHero(currentFilm);
+      renderShowtimes(currentFilm.showtimes || []);
+    } catch (err) {
+      console.error(err);
+      showShowtimeError('Failed to load film details. Make sure your Django backend is running.');
+    }
+  }
+
+  // ── Render film hero ──
+  function renderFilmHero(film) {
+    document.title = `${film.title} — CineVerse 2026`;
+    document.getElementById('filmTitle').textContent = film.title;
+    document.getElementById('filmDirector').textContent = `Directed by ${film.director}`;
+    document.getElementById('filmDesc').textContent = film.description || '';
+
+    const tags = document.getElementById('filmTags');
+    tags.innerHTML = `
+      <span class="film-tag gold">${film.genre}</span>
+      <span class="film-tag">${film.language}</span>
+      <span class="film-tag">${film.duration_mins} min</span>
+      ${film.is_featured ? '<span class="film-tag" style="border-color:var(--accent);color:var(--accent)">Featured</span>' : ''}
+    `;
+
+    if (film.poster_url) {
+      document.getElementById('filmThumb').innerHTML =
+        `<img src="${film.poster_url}" alt="${esc(film.title)}"/>`;
+      document.getElementById('heroBgPoster').innerHTML =
+        `<img src="${film.poster_url}" alt=""/><div class="film-hero-poster-overlay"></div>`;
+    }
+  }
+
+  // ── Render showtimes ──
+  function renderShowtimes(showtimes) {
+    const list = document.getElementById('showtimesList');
+
+    if (!showtimes.length) {
+      list.innerHTML = `
+        <div class="state-box">
+          <div class="state-icon">📅</div>
+          <div class="state-title">No Showtimes Yet</div>
+          <p class="state-msg">Showtimes for this film haven't been scheduled yet.<br>Check back soon.</p>
+          <a href="index.html" style="color:var(--gold);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--gold-dim);padding-bottom:2px;">← Browse Other Films</a>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = showtimes.map((show, i) => {
+      const dt = new Date(show.start_time);
+      const time = dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+      const [timePart, period] = time.split(' ');
+      const date = dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
+
+      const pct = show.total_seats > 0 ? (show.available_seats / show.total_seats) * 100 : 0;
+      const seatClass = show.available_seats === 0 ? 'sold-out' : pct <= 20 ? 'limited' : 'available';
+      const seatLabel = show.available_seats === 0 ? 'Sold Out' : pct <= 20 ? 'Limited' : 'Available';
+
+      return `
+      <div class="showtime-card reveal ${show.available_seats === 0 ? 'sold-out' : ''}" style="transition-delay:${i*0.06}s">
+        <div class="showtime-time-block">
+          <div class="showtime-time">${timePart}</div>
+          <div class="showtime-period">${period || ''}</div>
+          <div class="showtime-date-full">${date}</div>
+        </div>
+
+        <div class="showtime-details">
+          <div class="showtime-venue">${esc(show.venue?.name || 'TBA')}</div>
+          <div class="showtime-venue-sub">
+            <span>🏛 Capacity ${show.total_seats}</span>
+            <span>🎟 ${show.available_seats} seats left</span>
+          </div>
+        </div>
+
+        <div class="showtime-seats">
+          <div class="seats-bar-wrap">
+            <div class="seats-bar ${seatClass}" style="width:${pct}%"></div>
+          </div>
+          <div class="seats-count"><strong>${show.available_seats}</strong> / ${show.total_seats}</div>
+          <div class="seats-status ${seatClass}">${seatLabel}</div>
+        </div>
+
+        <div class="showtime-action">
+          <div class="price-tag">₹<span style="font-size:1.4rem">${show.price}</span></div>
+          ${show.available_seats === 0
+            ? `<button class="btn-sold-out">Sold Out</button>`
+            : `<button class="btn-book" onclick="openBooking('${show.id}', '${esc(show.venue?.name)}', '${date} ${time}', ${show.price}, ${show.available_seats})">Book Now</button>`
+          }
+        </div>
+      </div>`;
+    }).join('');
+
+    observeReveal();
+  }
+
+  function showShowtimeError(msg) {
+    document.getElementById('showtimesList').innerHTML = `
+      <div class="state-box">
+        <div class="state-icon">📡</div>
+        <div class="state-title">Something went wrong</div>
+        <p class="state-msg">${msg}</p>
+      </div>`;
+  }
+
+  // ── Booking modal ──
+  function openBooking(showtimeId, venue, dateTime, price, availableSeats) {
+    selectedShowtime = { id: showtimeId, venue, dateTime, price, availableSeats };
+    ticketCount = 1;
+
+    document.getElementById('modalFilmName').textContent = currentFilm?.title || '—';
+    document.getElementById('modalFilmMeta').textContent = `${venue} · ${dateTime}`;
+
+    updateTicketSummary();
+
+    // Check login
+    if (!accessToken) {
+      document.getElementById('loginPrompt').style.display = 'block';
+      document.getElementById('bookingForm').style.display = 'none';
+    } else {
+      document.getElementById('loginPrompt').style.display = 'none';
+      document.getElementById('bookingForm').style.display = 'block';
+    }
+
+    document.getElementById('modalOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function changeTickets(delta) {
+    const max = Math.min(selectedShowtime?.availableSeats || 10, 10);
+    ticketCount = Math.max(1, Math.min(max, ticketCount + delta));
+    updateTicketSummary();
+  }
+
+  function updateTicketSummary() {
+    if (!selectedShowtime) return;
+    const total = (selectedShowtime.price * ticketCount).toFixed(2);
+    document.getElementById('ticketNum').textContent = ticketCount;
+    document.getElementById('summaryPrice').textContent = `₹${selectedShowtime.price}`;
+    document.getElementById('summaryTickets').textContent = `×${ticketCount}`;
+    document.getElementById('summaryTotal').textContent = `₹${total}`;
+    document.getElementById('ticketMinus').disabled = ticketCount <= 1;
+    document.getElementById('ticketPlus').disabled = ticketCount >= Math.min(selectedShowtime.availableSeats, 10);
+  }
+
+  async function confirmBooking() {
+    if (!selectedShowtime || !accessToken) return;
+    const btn = document.getElementById('btnConfirm');
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+
+    try {
+      const res = await fetch(`${API}/bookings/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          showtime_id: selectedShowtime.id,
+          num_tickets: ticketCount
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Redirect to confirmation/payment page
+        window.location.href = `confirmation.html?booking_id=${data.booking_id}&ref=${data.booking_ref}`;
+      } else {
+        alert(data.error || 'Booking failed. Please try again.');
+        btn.disabled = false;
+        btn.textContent = 'Proceed to Payment';
+      }
+    } catch (err) {
+      alert('Network error. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Proceed to Payment';
+    }
+  }
+
+  // ── Close modal ──
+  document.getElementById('modalClose').addEventListener('click', closeModal);
+  document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ── Scroll reveal ──
+  function observeReveal() {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal:not(.visible)').forEach(el => io.observe(el));
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  observeReveal();
+  init();
+</script>
+</body>
+</html>
